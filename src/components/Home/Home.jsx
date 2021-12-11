@@ -12,6 +12,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import useAuth from '../../hooks/useAuth';
+import GroupList from '../GroupList/GroupList';
 
 const drawerWidth = 330;
 
@@ -117,7 +118,6 @@ export default function Home(props) {
                     >
                         Planner
                     </Typography>
-                    {/* <AppBarSearch setSearchInput={setSearchInput} /> */}
                     <Button onClick={logoutHandler}>Log Out</Button>
                 </Toolbar>
             </AppBar>
@@ -140,6 +140,7 @@ export default function Home(props) {
                     </IconButton>
                 </DrawerHeader>
                 <Divider />
+                <GroupList />
                 {/* <DataViewer markerLocation={markerLocation} /> */}
             </Drawer>
             <Main open={open}>
