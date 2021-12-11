@@ -11,9 +11,9 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path='/register' element={<Registration />} />
-        <Route element={<PrivateRouter />}>
-          <Route element={<Home />} />
+        <Route exact path='/register' element={<Registration />} />
+        <Route path='/' element={<PrivateRouter />}>
+          <Route path='/' element={<Home />} />
         </Route>
       </Routes>
     </div>
