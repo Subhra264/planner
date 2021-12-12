@@ -10,6 +10,7 @@ import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
+import useAuth from '../../hooks/useAuth';
 
 /*
 interface Props {
@@ -21,7 +22,8 @@ export default function CreateGroupDialog (props) {
     const [groupName, setGroupName] = useState('');
     const [imageURI, setImageURI] = useState('');
     const [memberEmail, setMemberEmail] = useState('');
-    const [memberList, setMemberList] = useState([]);
+    const { queryDocuments, currentUser, addDocument } = useAuth();
+    const [memberList, setMemberList] = useState([currentUser.email]);
 
     const changeGroupName = (ev) => {
         setGroupName(ev.target.value);
@@ -36,19 +38,34 @@ export default function CreateGroupDialog (props) {
     };
 
     const addMember = () => {
-        if (memberEmail) {
-            setMemberList(memberList => [...memberList, memberEmail]);
-        }
+        const email = memberEmail.trim();
+        if (!email || email === currentUser.email) return;
+        queryDocuments('users', ['email', '==', email])
+        .then(users => {
+            console.log('Found user', users);
+            if (!users.empty) setMemberList(memberList => [...memberList, email]);
+        })
+        .catch(err => {
+            console.log('Error finding email', err);
+        });
     };
 
     const createNewGroup = () => {
         if (!groupName) return;
         const newGroup = {
             name: groupName, 
-            image: imageURI
+            image: imageURI,
+            members: memberList
         };
 
-
+        addDocument('groups', newGroup)
+        .then(group => {
+            console.log('Created group', group);
+            props.handleClose();
+        })
+        .catch(err => {
+            console.log('Error creating group', err);
+        });
     };
 
     return (

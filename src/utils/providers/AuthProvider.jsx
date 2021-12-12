@@ -1,6 +1,7 @@
 import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { addDoc, collection, doc, getDoc, setDoc, query, getDocs, where } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
-import { auth } from '../../config/firebase.config';
+import { auth, firestore } from '../../config/firebase.config';
 import { AuthContext } from '../contexts';
 
 export default function AuthProvider ({ children }) {
@@ -32,8 +33,38 @@ export default function AuthProvider ({ children }) {
         return signOut(auth);
     };
 
+    const addDocument = (collectionName, data) => {
+        return addDoc(collection(firestore, collectionName), data);
+    };
+
+    const setDocument = (collectionName, id, data) => {
+        return setDoc(doc(firestore, collectionName, id), data, { merge: true });
+    };
+
+    const getDocument = (collectionName, id) => {
+        return getDoc(doc(firestore, collectionName, id));
+    };
+
+    const queryDocuments = (collectionName, queries) => {
+        const q = query(collection(firestore, collectionName), where(...queries));
+        // const q = collection(firestore, collectionName);
+        console.log('Query', q);
+        return getDocs(q);
+    };
+
     return (
-        <AuthContext.Provider value={{ currentUser, register, login, logout }} >
+        <AuthContext.Provider
+            value={{
+                currentUser,
+                register,
+                login,
+                logout,
+                addDocument,
+                setDocument,
+                getDocument,
+                queryDocuments
+            }}
+        >
             { children }
         </AuthContext.Provider>
     );

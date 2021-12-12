@@ -24,7 +24,7 @@ export default function Registration () {
         open: false,
         message: ''
     });
-    const { register, login, currentUser } = useAuth();
+    const { register, login, currentUser, addDocument } = useAuth();
 
     const changeEmail = ev => setEmail(ev.target.value);
     const changePassword = ev => setPassword(ev.target.value);
@@ -47,7 +47,20 @@ export default function Registration () {
 
         if (submitTypeSignUp) {
             register(email, password)
-            .then(user => console.log('user', user))
+            .then(user => {
+                console.log('user', user)
+                addDocument('users', {
+                        uid: user.user.uid,
+                        email,
+                        groups: []
+                    })
+                    .then(doc => {
+                        console.log('Users document', doc);
+                    })
+                    .catch(err => {
+                        showError(err);
+                    });
+            })
             .catch(err => {
                 console.log('error signup', err);
                 showError(err);
